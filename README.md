@@ -1,1 +1,3 @@
-JUnlink is a tiny JavaScript utility to handle broken links.
+JUnlink
+=======
+Handle broken links.

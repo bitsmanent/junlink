@@ -16,7 +16,6 @@ function handle(el) {
 		url = opts.baseurl+url;
 	
 	check(url, function(isup) {
-		isup = 0;
 		if(isup)
 			return;
 		el.onclick = function(ev) {

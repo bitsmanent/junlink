@@ -1,8 +1,8 @@
 /* JUnlink is a tiny JavaScript utility to handle broken links. */
 (function() {
 var opts = {
-	checkuri: '/checkuri', /* E.g.
-	baseurl: '', /* E.g. http://yoursite.com */
+	checkuri: '/checkuri',
+	baseurl: 'http://localhost',
 };
 
 function $(sel) {
@@ -11,10 +11,8 @@ function $(sel) {
 
 function handle(el) {
 	var url = el.getAttribute('href');
-
 	if(url[0] == '/')
 		url = opts.baseurl+url;
-	
 	check(url, function(isup) {
 		if(isup)
 			return;
@@ -38,7 +36,6 @@ function init() {
 	var	elems = $('a[href]'),
 		len = elems.length,
 		href, tm, n = 0,
-	
 	tm = setInterval(function() {
 		if(n >= len) {
 			clearTimeout(tm);

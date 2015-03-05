@@ -1,9 +1,11 @@
 /* JUnlink is a tiny JavaScript utility to handle broken links. */
+/* XXX should we use a worker? */
 (function() {
 var opts = {
 	checkuri: '/checkuri',
 	baseurl: 'http://localhost',
 };
+var xhrpend = 0; /* Are there pending XHRs? */
 
 function $(sel) {
 	return document.querySelectorAll(sel);
@@ -16,6 +18,7 @@ function handle(el) {
 	check(url, function(isup) {
 		if(isup)
 			return;
+		console.log(url);
 		el.onclick = function(ev) {
 			ev.preventDefault();
 		};
@@ -32,11 +35,30 @@ function check(url, callback) {
 	xhr.send(null);
 }
 
-function init() {
-	var	elems = $('a[href]'),
+function trackxhr() {
+	var xhrsend = XMLHttpRequest.prototype.send;
+	XMLHttpRequest.prototype.send = function() {
+		var onready = this.onreadystatechange;
+		xhrpend = 1;
+		this.onreadystatechange = function() {
+			if(this.readyState == 4)
+				xhrpend = 0;
+			if(onready)
+				onready.apply(this, arguments);
+		};
+		xhrsend.apply(this, arguments);
+	};
+}
+
+function run() {
+	var	elems = $('a[href]:not([href="#"])'),
 		len = elems.length,
 		href, tm, n = 0,
 	tm = setInterval(function() {
+		if(xhrpend) {
+			console.log('skip this cycle, retrying...');
+			return;
+		}
 		if(n >= len) {
 			clearTimeout(tm);
 			return;
@@ -45,8 +67,13 @@ function init() {
 		if(href && href != '#')
 			handle(elems[n]);
 		++n;
-	}, 500);
+	}, 560);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+function main() {
+	trackxhr();
+	run();
+}
+
+document.addEventListener('DOMContentLoaded', main);
 })();

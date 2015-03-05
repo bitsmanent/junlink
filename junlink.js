@@ -4,6 +4,8 @@
 var opts = {
 	checkuri: '/checkuri',
 	baseurl: 'http://localhost',
+	classchecked: 'junlink-checked',
+	classbroken: 'junlink-broken'
 };
 var xhrpend = 0; /* Are there pending XHRs? */
 
@@ -16,9 +18,10 @@ function handle(el) {
 	if(url[0] == '/')
 		url = opts.baseurl+url;
 	check(url, function(isup) {
-		if(isup)
+		el.classList.add(opts.classchecked);
+		if(isup == 1)
 			return;
-		console.log(url);
+		el.classList.add(opts.classbroken);
 		el.onclick = function(ev) {
 			ev.preventDefault();
 		};
@@ -51,23 +54,22 @@ function trackxhr() {
 }
 
 function run() {
-	var	elems = $('a[href]:not([href="#"])'),
+	var	elems = $('a[href]:not(.'+opts.scannedclass+')'),
 		len = elems.length,
-		href, tm, n = 0,
+		href, tm, n = 0;
 	tm = setInterval(function() {
-		if(xhrpend) {
-			console.log('skip this cycle, retrying...');
+		if(xhrpend)
 			return;
-		}
 		if(n >= len) {
 			clearTimeout(tm);
+			run();
 			return;
 		}
 		href = elems[n].getAttribute('href');
 		if(href && href != '#')
 			handle(elems[n]);
 		++n;
-	}, 560);
+	}, 550);
 }
 
 function main() {

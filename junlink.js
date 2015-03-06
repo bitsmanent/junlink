@@ -42,10 +42,10 @@ function trackxhr() {
 	var xhrsend = XMLHttpRequest.prototype.send;
 	XMLHttpRequest.prototype.send = function() {
 		var onready = this.onreadystatechange;
-		xhrpend = 1;
+		++xhrpend;
 		this.onreadystatechange = function() {
 			if(this.readyState == 4)
-				xhrpend = 0;
+				--xhrpend;
 			if(onready)
 				onready.apply(this, arguments);
 		};

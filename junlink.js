@@ -1,5 +1,4 @@
 /* JUnlink is a tiny JavaScript utility to handle broken links. */
-/* XXX should we use a worker? */
 (function() {
 var opts = {
 	checkuri: '/checkuri',
